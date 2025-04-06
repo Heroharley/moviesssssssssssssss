@@ -46,16 +46,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
             z-index: 1000;
         }
-        #scroll-controls {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            padding: 5px;
-            border-radius: 5px;
-            display: none;
-        }
         #toggle-top-bar {
             position: fixed;
             top: 10px;
@@ -65,6 +55,17 @@
             padding: 5px;
             border-radius: 5px;
             cursor: pointer;
+        }
+        #show-top-bar {
+            position: fixed;
+            top: 10px;
+            right: 60px;
+            background-color: #333;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
         }
     </style>
 </head>
@@ -96,12 +97,9 @@
         <button id="toggle-top-bar" onclick="toggleTopBar()">Hide Top Bar</button>
     </div>
 
-    <div id="embed-container"></div>
+    <button id="show-top-bar" onclick="toggleTopBar()">Show Top Bar</button>
 
-    <div id="scroll-controls">
-        <button onclick="scrollSubtitlesUp()">Up</button>
-        <button onclick="scrollSubtitlesDown()">Down</button>
-    </div>
+    <div id="embed-container"></div>
 
     <script>
         const STORAGE_KEY = "passwordAuth";
@@ -159,7 +157,6 @@
         function handleLoadClick() {
             if (sessionStorage.getItem(STORAGE_KEY) === HARDCODED_HASH) {
                 loadEmbed();
-                document.getElementById("scroll-controls").style.display = "block";
             } else {
                 document.getElementById("password-modal").style.display = "block";
             }
@@ -203,25 +200,18 @@
 
         function toggleTopBar() {
             const topBar = document.getElementById("top-bar");
+            const showButton = document.getElementById("show-top-bar");
+            const hideButton = document.getElementById("toggle-top-bar");
+
             if (topBar.style.display === "none") {
                 topBar.style.display = "flex";
-                document.getElementById("toggle-top-bar").textContent = "Hide Top Bar";
+                hideButton.textContent = "Hide Top Bar";
+                showButton.style.display = "none";
             } else {
                 topBar.style.display = "none";
-                document.getElementById("toggle-top-bar").textContent = "Show Top Bar";
+                hideButton.textContent = "Show Top Bar";
+                showButton.style.display = "block";
             }
-        }
-
-        function scrollSubtitlesUp() {
-            // This function is a placeholder. You cannot directly control iframe content due to same-origin policy.
-            // You might need to use a different approach or modify the iframe's content if possible.
-            console.log("Scroll subtitles up");
-        }
-
-        function scrollSubtitlesDown() {
-            // This function is a placeholder. You cannot directly control iframe content due to same-origin policy.
-            // You might need to use a different approach or modify the iframe's content if possible.
-            console.log("Scroll subtitles down");
         }
     </script>
 </body>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie/Series Embed</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+		background-color: black;
+        }
+        #top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        #top-bar select, #top-bar input {
+            margin-left: 10px;
+            padding: 5px;
+        }
+        #embed-container {
+            flex-grow: 1;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <label for="type-select">Type:</label>
+        <select id="type-select" onchange="updateInputs()">
+            <option value="movie">Movie</option>
+            <option value="series">Series</option>
+        </select>
+
+        <div id="inputs">
+            <!-- Movie input -->
+            <input type="text" id="movie-id" placeholder="IMDB/TMDB ID">
+
+            <!-- Series inputs -->
+            <input type="text" id="series-id" placeholder="IMDB/TMDB ID" style="display:none;">
+            <input type="number" id="season-number" placeholder="Season" style="display:none;">
+            <input type="number" id="episode-number" placeholder="Episode" style="display:none;">
+        </div>
+
+        <button onclick="loadEmbed()">Load</button>
+    </div>
+
+    <div id="embed-container">
+        <!-- Embed iframe -->
+    </div>
+
+    <script>
+        function updateInputs() {
+            const type = document.getElementById("type-select").value;
+            
+            document.getElementById("movie-id").style.display = type === "movie" ? "inline-block" : "none";
+            document.getElementById("series-id").style.display = type === "series" ? "inline-block" : "none";
+            document.getElementById("season-number").style.display = type === "series" ? "inline-block" : "none";
+            document.getElementById("episode-number").style.display = type === "series" ? "inline-block" : "none";
+        }
+
+        function loadEmbed() {
+            const type = document.getElementById("type-select").value;
+            const embedContainer = document.getElementById("embed-container");
+            
+            let iframeSrc = "";
+
+            if (type === "movie") {
+                const movieId = document.getElementById("movie-id").value.trim();
+                if (movieId) {
+                    iframeSrc = `https://vidsrc.me/embed/movie/${movieId}`;
+                }
+            } else if (type === "series") {
+                const seriesId = document.getElementById("series-id").value.trim();
+                let seasonNumber = document.getElementById("season-number").value.trim();
+                let episodeNumber = document.getElementById("episode-number").value.trim();
+
+                if (seriesId) {
+                    iframeSrc = `https://vidsrc.me/embed/tv?imdb=${seriesId}`;
+                    if (seasonNumber) {
+                        iframeSrc += `&season=${seasonNumber}`;
+                        if (episodeNumber) {
+                            iframeSrc += `&episode=${episodeNumber}`;
+                        }
+                    }
+                }
+            }
+
+            if (iframeSrc) {
+                embedContainer.innerHTML = `<iframe src="${iframeSrc}" referrerpolicy="origin" allowfullscreen style="width: 100%; height: 100%;"></iframe>`;
+            } else {
+                embedContainer.innerHTML = "";
+            }
+        }
+    </script>
+</body>
+</html>

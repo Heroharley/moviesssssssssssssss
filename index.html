@@ -2,329 +2,486 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heroharley's Media Player | BRUH</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background-color: black;
-            color: white;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Heroharley's Media Player | BRUH</title>
+  <style>
+    body {
+      background: black;
+    }
 
-        #play-settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 8px 12px;
-            background-color: #222;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            z-index: 1000;
-        }
+    #btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 10001;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      background-color: #4c4cff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(76, 76, 255, 0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
 
-        #play-settings-btn:hover {
-            background-color: #444;
-        }
+    #btn:hover {
+      background-color: #6262f8;
+      box-shadow: 0 6px 20px rgba(98, 98, 248, 0.9);
+    }
 
-        #password-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-        }
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 10002;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
 
-        #password-modal .modal-content {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
-        }
+    #modal .content {
+      background-color: #1e1e2f;
+      padding: 30px 35px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      max-width: 50vw;
+      max-height: 50vh;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      overflow-y: auto;
+    }
 
-        #password-modal h3 {
-            color: white;
-            margin: 0 0 10px;
-            text-align: center;
-        }
+    #modal h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #f0f0f3;
+      user-select: none;
+    }
 
-        #password-modal input[type="password"] {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #555;
-            background-color: #444;
-            color: white;
-            width: 100%;
-            box-sizing: border-box;
-        }
+    label {
+      font-size: 14px;
+      color: #a2a2b5;
+      margin-bottom: 6px;
+      display: inline-block;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      user-select: none;
+    }
 
-        #password-modal button {
-            padding: 10px 15px;
-            background-color: #555;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
+    select,
+    input[type=text],
+    input[type=number],
+    input[type=password] {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: none;
+      background-color: #2e2e4f;
+      color: #e3e3e8;
+      box-shadow: inset 2px 2px 5px #272748, inset -2px -2px 5px #39396a;
+      transition: background-color 0.2s ease;
+      outline-offset: 2px;
+    }
 
-        #password-modal button:hover {
-            background-color: #777;
-        }
+    select:focus,
+    input[type=text]:focus,
+    input[type=number]:focus,
+    input[type=password]:focus {
+      background-color: #3a3a6b;
+      outline: none;
+    }
 
-        #password-error {
-            color: red;
-            margin: 5px 0 0;
-            text-align: center;
-        }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
 
-        #settings-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
+    button.loadbtn {
+      background-color: #4c4cff;
+      border: none;
+      border-radius: 8px;
+      color: #f0f0f3;
+      padding: 12px 22px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(76, 76, 255, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
 
-        #settings-modal .modal-content {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            max-width: 500px;
-            position: relative;
-        }
+    button.loadbtn:hover {
+      background-color: #6262f8;
+      box-shadow: 0 6px 20px rgba(98, 98, 248, 0.7);
+    }
 
-        #settings-modal label {
-            display: block;
-            color: white;
-            margin-bottom: 5px;
-        }
+    .closebtn {
+      background: transparent;
+      font-size: 24px;
+      line-height: 1;
+      color: #8888aa;
+      transition: color 0.2s ease;
+      padding: 0;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        #settings-modal select,
-        #settings-modal input[type="text"],
-        #settings-modal input[type="number"] {
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #555;
-            background-color: #444;
-            color: white;
-            width: 100%;
-            box-sizing: border-box;
-        }
+    .closebtn:hover {
+      color: #f0f0f3;
+    }
 
-        #settings-modal button {
-            padding: 10px 15px;
-            background-color: #555;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 45%;
-            margin-top: 10px;
-        }
+    #results {
+      margin-top: 5px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-height: 400px;
+      overflow-y: auto;
+    }
 
-        #settings-modal button:hover {
-            background-color: #777;
-        }
+    .resultcard {
+      background-color: #2f2f5c;
+      border-radius: 10px;
+      padding: 12px;
+      width: 160px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      color: #ddd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+      user-select: none;
+    }
 
-        .close-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: none;
-            color: white;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 2001;
-            padding: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .resultcard:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    }
 
-        #embed-container {
-            flex-grow: 1;
-        }
+    .resultcard img {
+      border-radius: 8px;
+      width: 140px;
+      height: 210px;
+      object-fit: cover;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
 
-        #embed-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+    .resultcard button {
+      background-color: black;
+      box-shadow: none;
+      font-weight: 700;
+      font-size: 14px;
+      color: #ffffff !important;
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease,
+        box-shadow 0.3s ease;
+      user-select: none;
+      z-index: 10;
+    }
 
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-        }
-    </style>
+    .resultcard button:hover {
+      background-color: #6464ff;
+      box-shadow: 0 5px 15px rgba(100, 100, 255, 0.7);
+      color: #ecf0ff !important;
+    }
+
+    #embeddiv {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 998;
+    }
+
+    #embeddiv iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  </style>
 </head>
 
 <body>
-    <button id="play-settings-btn" onclick="showSettingsModal()">Play Settings</button>
+  <button id="btn" onclick="showModal()">Play Settings</button>
 
-    <div id="password-modal">
-        <div class="modal-content">
-            <h3>Enter Password</h3>
-            <input type="password" id="password-input" placeholder="Password" />
-            <button onclick="checkPassword()">Submit</button>
-            <p id="password-error"></p>
-        </div>
+  <div
+    id="pwdmodal"
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+    "
+  >
+    <div class="content" style="max-width: 400px; text-align: center">
+      <h3>Enter Password</h3>
+      <input type="password" id="pwdinput" placeholder="Password" />
+      <button class="loadbtn" onclick="checkPwd()">Submit</button>
+      <p id="pwderror"></p>
     </div>
+  </div>
 
-    <div id="settings-modal" style="display: none;">
-        <div class="modal-content">
-            <div class="button-container">
-                <button class="close-button" onclick="hideSettingsModal()">X</button>
-                <button onclick="loadMedia()">Load</button>
-            </div>
-            <h3>Play Settings</h3>
-            <label for="type-select">Type:</label>
-            <select id="type-select">
-                <option value="movie">Movie</option>
-                <option value="series">Series</option>
-            </select>
+  <div
+    id="modal"
+    style="display: none; flex; justify-content: center; align-items: center"
+  >
+    <div class="content">
+      <button class="closebtn" onclick="hideModal()">×</button>
+      <h3>Play Settings</h3>
 
-            <label for="media-id">IMDB/TMDB ID:</label>
-            <input type="text" id="media-id" placeholder="Enter ID">
+      <label for="type-sel">Type:</label>
+      <select id="type-sel" onchange="showSeries()">
+        <option value="movie">Movie</option>
+        <option value="series">Series</option>
+      </select>
 
-            <div id="series-inputs" style="display: none;">
-                <label for="season-number">Season:</label>
-                <input type="number" id="season-number" placeholder="Season Number">
-                <label for="episode-number">Episode:</label>
-                <input type="number" id="episode-number" placeholder="Episode Number">
-            </div>
-        </div>
+      <label for="id-input">IMDb ID:</label>
+      <input type="text" id="id-input" placeholder="Enter IMDb ID" />
+
+      <label for="search-input">Search Movies/Series:</label>
+      <div style="display: flex; margin-bottom: 10px">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search by name..."
+          style="flex-grow: 1; margin-right: 5px"
+        />
+        <button class="loadbtn" onclick="doSearch()">Search</button>
+      </div>
+
+      <div id="results"></div>
+
+      <div id="series-params" style="display: none">
+        <label for="season-input">Season:</label>
+        <input type="number" id="season-input" placeholder="Season Number" />
+        <label for="episode-input">Episode:</label>
+        <input type="number" id="episode-input" placeholder="Episode Number" />
+      </div>
+
+      <button
+        class="loadbtn"
+        onclick="loadPlayer()"
+        style="margin-top: 12px; width: 100%"
+      >
+        Load
+      </button>
     </div>
+  </div>
 
-    <div id="embed-container"></div>
+  <div id="embeddiv"></div>
 
-    <script>
-        const STORAGE_KEY = "passwordAuth";
-        const SALT = "net";
-        const HARDCODED_HASH = "b5349418f06fa0540d86c79878bb29fc1a3d235f060970bea0ca4c1e75dc7a17";
+  <script>
+    const KEY = "passwordAuth";
+    const SALT = "net";
+    const HASHED =
+      "b5349418f06fa0540d86c79878bb29fc1a3d235f060970bea0ca4c1e75dc7a17";
 
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const saltedPassword = password + SALT;
-            const data = encoder.encode(saltedPassword);
-            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-            return Array.from(new Uint8Array(hashBuffer))
-                .map(byte => byte.toString(16).padStart(2, "0"))
-                .join("");
+    async function hashPwd(pwd) {
+      const encoder = new TextEncoder();
+      const salted = pwd + SALT;
+      const data = encoder.encode(salted);
+      const hashBuff = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuff))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    function isAuth() {
+      return sessionStorage.getItem(KEY) === HASHED;
+    }
+
+    window.onload = async () => {
+      if (!isAuth()) {
+        document.getElementById("pwdmodal").style.display = "flex";
+        document.getElementById("modal").style.display = "none";
+      } else {
+        document.getElementById("pwdmodal").style.display = "none";
+      }
+    };
+
+    async function checkPwd() {
+      const input = document.getElementById("pwdinput").value.trim();
+      const error = document.getElementById("pwderror");
+      error.textContent = "";
+
+      if (!input) {
+        error.textContent = "Password cannot be empty!";
+        return;
+      }
+      try {
+        const hashedInput = await hashPwd(input);
+        if (hashedInput === HASHED) {
+          sessionStorage.setItem(KEY, hashedInput);
+          document.getElementById("pwdmodal").style.display = "none";
+          error.textContent = "";
+        } else {
+          error.textContent = "Incorrect password!";
+          sessionStorage.removeItem(KEY);
+        }
+      } catch (e) {
+        console.error("Hashing error:", e);
+        error.textContent = "Validation error. Try reloading the page.";
+      }
+    }
+
+    function showModal() {
+      if (isAuth()) {
+        document.getElementById("modal").style.display = "flex";
+      } else {
+        document.getElementById("pwdmodal").style.display = "flex";
+      }
+    }
+
+    function hideModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function showSeries() {
+      const type = document.getElementById("type-sel").value;
+      document.getElementById("series-params").style.display =
+        type === "series" ? "block" : "none";
+    }
+
+    async function doSearch() {
+      const query = document.getElementById("search-input").value.trim();
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+
+      if (!query) {
+        results.style.display = "none";
+        return;
+      }
+      results.style.display = "flex";
+
+      const url = `https://api.imdbapi.dev/search/titles?query=${encodeURIComponent(
+        query
+      )}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.titles || data.titles.length === 0) {
+          results.innerHTML = "<p>No results found.</p>";
+          return;
         }
 
-        function isPasswordValid() {
-            return sessionStorage.getItem(STORAGE_KEY) === HARDCODED_HASH;
+        results.innerHTML = "";
+        for (const item of data.titles) {
+          const poster =
+            item.primaryImage && item.primaryImage.url
+              ? item.primaryImage.url
+              : "https://via.placeholder.com/160x240?text=No+Image";
+          const title = item.primaryTitle || "Unknown";
+          const year = item.startYear || "N/A";
+          const imdbId = item.id;
+
+          const card = document.createElement("div");
+          card.className = "resultcard";
+
+          const img = document.createElement("img");
+          img.src = poster;
+          img.alt = title;
+
+          const tit = document.createElement("div");
+          tit.textContent = `${title} (${year})`;
+
+          const btn = document.createElement("button");
+          btn.textContent = "Play";
+          btn.onclick = () => {
+            document.getElementById("id-input").value = imdbId;
+            document.getElementById("type-sel").value = item.type
+              .toLowerCase()
+              .includes("movie")
+              ? "movie"
+              : "series";
+            showSeries();
+            results.style.display = "none";
+            document.getElementById("search-input").value = "";
+            loadPlayer();
+          };
+
+          card.appendChild(img);
+          card.appendChild(tit);
+          card.appendChild(btn);
+
+          results.appendChild(card);
         }
+      } catch (error) {
+        results.innerHTML = "<p>Error loading results, try again.</p>";
+        console.error(error);
+      }
+    }
 
-        window.onload = async () => {
-            if (!isPasswordValid()) {
-                document.getElementById("password-modal").style.display = "flex";
-                document.getElementById("settings-modal").style.display = "none";
-            } else {
-                document.getElementById("password-modal").style.display = "none";
-            }
-        };
+    function loadPlayer() {
+      const type = document.getElementById("type-sel").value;
+      const mediaId = document.getElementById("id-input").value.trim();
+      const season = document.getElementById("season-input").value.trim();
+      const episode = document.getElementById("episode-input").value.trim();
+      const embed = document.getElementById("embeddiv");
 
-        async function checkPassword() {
-            const input = document.getElementById("password-input").value;
-            const errorMsg = document.getElementById("password-error");
+      if (!mediaId) {
+        alert("Please enter or select a valid IMDb ID.");
+        return;
+      }
+      embed.style.display = "block";
 
-            if (!input) {
-                errorMsg.textContent = "Password cannot be empty!";
-                return;
-            }
+      let src = "";
+      if (type === "movie") {
+        src = `https://vidsrc.me/embed/movie/${mediaId}`;
+      } else if (type === "series") {
+        src = `https://vidsrc.me/embed/tv?imdb=${mediaId}`;
+        if (season) src += `&season=${season}`;
+        if (episode) src += `&episode=${episode}`;
+      }
 
-            try {
-                const inputHash = await hashPassword(input);
-
-                if (inputHash === HARDCODED_HASH) {
-                    sessionStorage.setItem(STORAGE_KEY, inputHash);
-                    document.getElementById("password-modal").style.display = "none";
-                    document.getElementById("password-error").textContent = "";
-                } else {
-                    errorMsg.textContent = "Incorrect password!";
-                    sessionStorage.removeItem(STORAGE_KEY);
-                }
-            } catch (error) {
-                console.error("Hashing error:", error);
-                errorMsg.textContent = "Validation error. Try reloading the page.";
-            }
-        }
-
-        function showSettingsModal() {
-            if (isPasswordValid()) {
-                document.getElementById("settings-modal").style.display = "flex";
-            } else {
-                document.getElementById("password-modal").style.display = "flex";
-            }
-        }
-
-        function hideSettingsModal() {
-            document.getElementById("settings-modal").style.display = "none";
-        }
-
-        function updateInputs() {
-            const type = document.getElementById("type-select").value;
-            document.getElementById("series-inputs").style.display = type === "series" ? "block" : "none";
-        }
-
-        function loadMedia() {
-            const type = document.getElementById("type-select").value;
-            const mediaId = document.getElementById("media-id").value.trim();
-            const seasonNumber = document.getElementById("season-number").value.trim();
-            const episodeNumber = document.getElementById("episode-number").value.trim();
-            const embedContainer = document.getElementById("embed-container");
-
-            let iframeSrc = "";
-
-            if (type === "movie") {
-                if (mediaId) iframeSrc = `https://vidsrc.me/embed/movie/${mediaId}`;
-            } else if (type === "series") {
-                if (mediaId) {
-                    iframeSrc = `https://vidsrc.me/embed/tv?imdb=${mediaId}`;
-                    if (seasonNumber) iframeSrc += `&season=${seasonNumber}`;
-                    if (episodeNumber) iframeSrc += `&episode=${episodeNumber}`;
-                }
-            }
-
-            if (iframeSrc) {
-                embedContainer.innerHTML = `<iframe src="${iframeSrc}" referrerpolicy="origin" allowfullscreen></iframe>`;
-                document.getElementById("settings-modal").style.display = "none";
-            } else {
-                embedContainer.innerHTML = "";
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById("type-select").addEventListener("change", updateInputs);
-        });
-    </script>
+      embed.innerHTML = `<iframe src="${src}" referrerpolicy="origin" allowfullscreen></iframe>`;
+      hideModal();
+    }
+  </script>
 </body>
 
 </html>
+<!--
+made with ai
+-->
